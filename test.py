@@ -26,19 +26,6 @@ from craft import CRAFT
 
 from collections import OrderedDict
 
-
-def copyStateDict(state_dict):
-    if list(state_dict.keys())[0].startswith("module"):
-        start_idx = 1
-    else:
-        start_idx = 0
-    new_state_dict = OrderedDict()
-    for k, v in state_dict.items():
-        name = ".".join(k.split(".")[start_idx:])
-        new_state_dict[name] = v
-    return new_state_dict
-
-
 def str2bool(v):
     return v.lower() in ("yes", "y", "true", "t", "1")
 
@@ -130,7 +117,7 @@ if __name__ == '__main__':
     net = CRAFT()     # initialize
 
     print('Loading weights from checkpoint (' + args.trained_model + ')')
-    net.load_state_dict(copyStateDict(torch.load(args.trained_model, map_location=device, weights_only=True)))
+    net.load_state_dict(craft_utils.copyStateDict(torch.load(args.trained_model, map_location=device, weights_only=True)))
     net = net.to(device)
     net.eval()
 
@@ -140,7 +127,7 @@ if __name__ == '__main__':
         from refinenet import RefineNet
         refine_net = RefineNet()
         print('Loading weights of refiner from checkpoint (' + args.refiner_model + ')')
-        refine_net.load_state_dict(copyStateDict(torch.load(args.refiner_model, map_location=device, weigts_only=True)))
+        refine_net.load_state_dict(craft_utils.copyStateDict(torch.load(args.refiner_model, map_location=device, weigts_only=True)))
         refine_net = refine_net.to(device)
         refine_net.eval()
         args.poly = True
